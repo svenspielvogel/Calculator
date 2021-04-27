@@ -1,0 +1,5 @@
+GET http://localhost:3000/calc?str=1.2*40-2%2b4\/10 HTTP/1.1
+###
+
+GET http://localhost:3000/ HTTP/1.1
+###
