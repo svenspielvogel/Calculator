@@ -5,7 +5,7 @@
         <div class="display">{{ input }}</div>
         <div class="answer">{{ answer }}</div>
         <div @click="clear" id="clear" class="btn operator">C</div>
-        <div id="back" class="btn operator">CE</div>
+        <div @click="deleteLast" id="back" class="btn operator">CE</div>
         <div @click="append('7')" class="btn">7</div>
         <div @click="append('8')" class="btn">8</div>
         <div @click="append('9')" class="btn">9</div>
@@ -62,11 +62,21 @@ export default {
 
     clear() {
       this.input = "";
-      this.result = "";
+      this.answer = "";
       this.hasOperator = false;
     },
 
+    deleteLast() {
+      let str = this.input;
+      let sign = str.substring(str.length - 1);
+      if (sign == "+" || sign == "-" || sign == "*" || sign == "/") {
+        this.hasOperator = false;
+      }
+      this.input = str.substring(0, this.input.length - 1);
+    },
+
     calculate() {
+      console.log("CALC");
       let route = "";
       switch (this.operator) {
         case "+":
@@ -89,7 +99,7 @@ export default {
           num1: parseInt(this.num1),
           num2: parseInt(this.num2),
         })
-        .then(({ data }) => (this.answer = parseFloat(data.result)));
+        .then(({ data }) => (this.answer = data.result));
     },
   },
 };
