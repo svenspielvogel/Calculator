@@ -1,4 +1,4 @@
-const service = require('./service')
+const service = require('../src/service')
 
 test('adds 1 + 2 to equal 3', () => {
     expect(service.add(1, 2)).toBe(3);
