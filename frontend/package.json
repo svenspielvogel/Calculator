@@ -9,6 +9,7 @@
         "deven": "concurrently \"vue-cli-service serve\" \"cd../backend && node calculator.js\""
     },
     "dependencies": {
+        "axios": "^0.21.1",
         "concurrently": "^6.0.2",
         "core-js": "^3.6.5",
         "vue": "^2.6.11"

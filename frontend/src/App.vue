@@ -2,133 +2,94 @@
   <div id="app">
     <div class="container">
       <div class="calculator">
-        <div class="display">{{ logList + current }}</div>
+        <div class="display">{{ input }}</div>
         <div class="answer">{{ answer }}</div>
         <div @click="clear" id="clear" class="btn operator">C</div>
-        <div @click="sign" id="sign" class="btn operator">+/-</div>
-        <div @click="percent" id="percent" class="btn operator">
-          %
-        </div>
-        <div @click="divide" id="divide" class="btn operator">
-          /
-        </div>
-        <div @click="append('7')" id="n7" class="btn">7</div>
-        <div @click="append('8')" id="n8" class="btn">8</div>
-        <div @click="append('9')" id="n9" class="btn">9</div>
-        <div @click="times" id="times" class="btn operator">*</div>
-        <div @click="append('4')" id="n4" class="btn">4</div>
-        <div @click="append('5')" id="n5" class="btn">5</div>
-        <div @click="append('6')" id="n6" class="btn">6</div>
-        <div @click="minus" id="minus" class="btn operator">-</div>
+        <div id="back" class="btn operator">CE</div>
+        <div @click="append('7')" class="btn">7</div>
+        <div @click="append('8')" class="btn">8</div>
+        <div @click="append('9')" class="btn">9</div>
+        <div @click="append('/')" class="btn operator">/</div>
+        <div @click="append('4')" class="btn">4</div>
+        <div @click="append('5')" class="btn">5</div>
+        <div @click="append('6')" class="btn">6</div>
+        <div @click="append('*')" class="btn operator">*</div>
         <div @click="append('1')" id="n1" class="btn">1</div>
         <div @click="append('2')" id="n2" class="btn">2</div>
         <div @click="append('3')" id="n3" class="btn">3</div>
-        <div @click="plus" id="plus" class="btn operator">+</div>
+        <div @click="append('-')" id="plus" class="btn operator">-</div>
         <div @click="append('0')" id="n0" class="zero">0</div>
-        <div @click="dot" id="dot" class="btn">.</div>
-        <div @click="equal" id="equal" class="btn operator">=</div>
+        <div @click="calculate" class="btn equal operator">=</div>
+        <div @click="append('+')" class="btn operator ">+</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+const axios = require("axios");
+
 export default {
   name: "App",
-  components: {},
   data() {
     return {
-      logList: "",
-      current: "",
+      baseURL: "http://localhost:3000",
+      input: "",
       answer: "",
-      operatorClicked: true,
+      operator: "",
+      num1: "",
+      num2: "",
+      hasOperator: false,
     };
   },
   methods: {
-    append(number) {
-      if (this.operatorClicked) {
-        this.current = "";
-        this.operatorClicked = false;
+    append(sign) {
+      if (sign == "+" || sign == "-" || sign == "*" || sign == "/") {
+        if (this.hasOperator) {
+          return;
+        } else {
+          this.hasOperator = true;
+          this.operator = sign;
+        }
       }
-      this.animateNumber(`n${number}`);
-      this.current = `${this.current}${number}`;
-    },
-    addtoLog(operator) {
-      if (this.operatorClicked == false) {
-        this.logList += `${this.current} ${operator} `;
-        this.current = "";
-        this.operatorClicked = true;
-      }
-    },
-    // animateNumber(number) {
-    //   let tl = anime.timeline({
-    //     targets: `#${number}`,
-    //     duration: 250,
-    //     easing: "easeInOutCubic",
-    //   });
-    //   tl.add({ backgroundColor: "#c1e3ff" });
-    //   tl.add({ backgroundColor: "#f4faff" });
-    // },
-    // animateOperator(operator) {
-    //   let tl = anime.timeline({
-    //     targets: `#${operator}`,
-    //     duration: 250,
-    //     easing: "easeInOutCubic",
-    //   });
-    //   tl.add({ backgroundColor: "#a6daff" });
-    //   tl.add({ backgroundColor: "#d9efff" });
-    // },
-    clear() {
-      this.animateOperator("clear");
-      this.current = "";
-      this.answer = "";
-      this.logList = "";
-      this.operatorClicked = false;
-    },
-    sign() {
-      this.animateOperator("sign");
-      if (this.current != "") {
-        this.current =
-          this.current.charAt(0) === "-"
-            ? this.current.slice(1)
-            : `-${this.current}`;
-      }
-    },
-    percent() {
-      this.animateOperator("percent");
-      if (this.current != "") {
-        this.current = `${parseFloat(this.current) / 100}`;
-      }
-    },
-    dot() {
-      this.animateNumber("dot");
-      if (this.current.indexOf(".") === -1) {
-        this.append(".");
-      }
-    },
-    divide() {
-      this.animateOperator("divide");
-      this.addtoLog("/");
-    },
-    times() {
-      this.animateOperator("times");
-      this.addtoLog("*");
-    },
-    minus() {
-      this.animateOperator("minus");
-      this.addtoLog("-");
-    },
-    plus() {
-      this.animateOperator("plus");
-      this.addtoLog("+");
-    },
-    equal() {
-      this.animateOperator("equal");
-      if (this.operatorClicked == false) {
-        this.answer = eval(this.logList + this.current);
+      if (this.hasOperator) {
+        this.num2 = sign;
       } else {
-        this.answer = "WHAT?!!";
+        this.num1 = sign;
       }
+      this.input = this.input + sign;
+    },
+
+    clear() {
+      this.input = "";
+      this.result = "";
+      this.hasOperator = false;
+    },
+
+    calculate() {
+      let route = "";
+      switch (this.operator) {
+        case "+":
+          route = "/add";
+          break;
+        case "-":
+          route = "/subtract";
+          break;
+        case "*":
+          route = "/multiply";
+          break;
+        case "/":
+          route = "/divide";
+          break;
+        default:
+          break;
+      }
+      axios
+        .post(`${this.baseURL}${route}`, {
+          num1: parseInt(this.num1),
+          num2: parseInt(this.num2),
+        })
+        .then(({ data }) => (this.answer = parseFloat(data.result)));
     },
   },
 };
@@ -139,14 +100,11 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-::selection {
-  background: none;
+  font-family: sans-serif;
 }
 
 body {
-  background-color: #3fa9fc;
+  background-color: #872931;
 }
 
 #app {
@@ -180,8 +138,8 @@ body {
   text-align: center;
   text-decoration: none;
   outline: none;
-  color: #484848;
-  background-color: #f4faff;
+  color: #fff;
+  background-color: #ffa8a8;
   border-radius: 5px;
 }
 
@@ -190,22 +148,29 @@ body {
   grid-column: 1 / 5;
   display: flex;
   align-items: center;
+  color: #b59e9e;
 }
 
 .display {
-  color: #a3a3a3;
   border-bottom: 1px solid #e1e1e1;
   margin-bottom: 15px;
   overflow: hidden;
   text-overflow: clip;
-  color: red;
 }
 
 .answer {
   font-weight: 500;
-  color: #146080;
   font-size: 55px;
   height: 65px;
+  overflow: hidden;
+}
+
+#clear {
+  grid-column: 1 / 3;
+}
+
+#back {
+  grid-column: 3 / 5;
 }
 
 .zero {
@@ -213,7 +178,7 @@ body {
 }
 
 .operator {
-  background-color: #d9efff;
-  color: #3fa9fc;
+  background-color: #d3404c;
+  color: #fff;
 }
 </style>
