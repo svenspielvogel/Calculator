@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const port = 3000;
 const cors = require("cors");
 const service = require("./src/service");
 
@@ -30,8 +29,5 @@ app.post("/divide", (req, res) => {
   const result = service.divide(num1, num2);
   res.json({ result });
 });
-
-
-// app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 module.exports = app;

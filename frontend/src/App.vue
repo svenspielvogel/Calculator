@@ -20,14 +20,14 @@
         <div @click="append('-')" id="plus" class="btn operator">-</div>
         <div @click="append('0')" id="n0" class="zero">0</div>
         <div @click="calculate" class="btn equal operator">=</div>
-        <div @click="append('+')" class="btn operator ">+</div>
+        <div @click="append('+')" class="btn operator">+</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "App",
@@ -51,28 +51,46 @@ export default {
           this.hasOperator = true;
           this.operator = sign;
         }
-      }
-      if (this.hasOperator) {
-        this.num2 = sign;
       } else {
-        this.num1 = sign;
+        if (this.hasOperator) {
+          this.num2 = this.num2 + sign;
+        } else {
+          this.num1 = this.num1 + sign;
+        }
       }
+
       this.input = this.input + sign;
     },
 
     clear() {
       this.input = "";
       this.answer = "";
+      this.operator = "";
+      this.num1 = "";
+      this.num2 = "";
       this.hasOperator = false;
     },
 
     deleteLast() {
       let str = this.input;
       let sign = str.substring(str.length - 1);
+      console.log(this.input);
+      console.log(sign);
+
       if (sign == "+" || sign == "-" || sign == "*" || sign == "/") {
-        this.hasOperator = false;
+        if (this.hasOperator) {
+          this.hasOperator = false;
+          this.operator = "";
+        }
+      } else {
+        if (this.hasOperator) {
+          this.num2 = this.num2.substring(0, this.num2.length - 1);
+        } else {
+          this.num1 = this.num1.substring(0, this.num1.length - 1);
+        }
       }
       this.input = str.substring(0, this.input.length - 1);
+      console.log(this.input);
     },
 
     calculate() {
