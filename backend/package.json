@@ -6,7 +6,7 @@
     "scripts": {
         "test": "jest",
         "dev": "nodemon ./src/start.js",
-        "devenv": "concurrently \"nodemon ./start.js\" \"cd../frontend &&npm run serve\""
+        "devenv": "concurrently \"nodemon ./start.js\" \"cd../frontend &&npm run dev\""
     },
     "author": "",
     "license": "ISC",
